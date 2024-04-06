@@ -3,6 +3,7 @@ import math
 import os
 import random
 import sys
+import gc
 import time
 from copy import deepcopy
 from datetime import datetime
@@ -383,6 +384,8 @@ def train(hyp, opt, device, callbacks):  # hyp is path/to/hyp.yaml or hyp dictio
                     torch.save(ckpt, w / f'epoch{epoch}.pt')
                 del ckpt
                 callbacks.run('on_model_save', last, epoch, final_epoch, best_fitness, fi)
+                torch.cuda.empty_cache()
+                gc.collect()
 
         # EarlyStopping
         if RANK != -1:  # if DDP training
